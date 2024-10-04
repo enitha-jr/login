@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,session,redirect
+from flask import Flask,render_template,request,session,redirect,url_for
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 
@@ -8,12 +8,11 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'enithaJR'
 app.config['MYSQL_DB'] = 'login'
-app.secret_key = '2685'
+app.secret_key = '2685' 
 
 mysql = MySQL(app)
 
-@app.route('/')
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET','POST'])
 def login():
     # render_template('index.html')
     msg = 'Something went wrong'
@@ -25,9 +24,9 @@ def login():
             cursor.execute("select * from accounts where username = %s and password = %s", (user, pswd,))
             account = cursor.fetchone()
             if account:
-                # session['loggedin'] = True
-                # session['id'] = account['id']
-                # session['username'] = account['username']
+                session['loggedin'] = True
+                session['id'] = account['id']
+                session['username'] = account['username']
                 msg='Logged in successfully'
                 print(msg)
                 return render_template('home.html' ,msg=msg)
@@ -38,7 +37,7 @@ def login():
     print(msg)
     return render_template('index.html', msg=msg)
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET','POST'])
 def register():
     msg = 'Something went wrong'
     if request.method == 'POST':
